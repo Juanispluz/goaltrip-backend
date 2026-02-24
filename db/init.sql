@@ -1,14 +1,4 @@
--- 1. Tabla de Usuarios
-CREATE TABLE IF NOT EXISTS usuarios (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL, 
-    rol VARCHAR(20) DEFAULT 'user', 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Tabla de Paquetes
+-- 1. Tabla de Paquetes
 CREATE TABLE IF NOT EXISTS paquetes (
     id SERIAL PRIMARY KEY,
     ciudad VARCHAR(100) NOT NULL,
@@ -22,7 +12,7 @@ CREATE TABLE IF NOT EXISTS paquetes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Tabla de Leads
+-- 2. Tabla de Leads
 CREATE TABLE IF NOT EXISTS leads (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
