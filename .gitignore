@@ -1,0 +1,8 @@
+# Dependencias
+node_modules/
+
+# Base de datos local (Docker)
+postgres_data/
+
+# Variables de entorno
+.env
