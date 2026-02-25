@@ -5,11 +5,11 @@ Funciones de lógica de negocio para paquetes
 Aquí luego se conectará el repository con PostgreSQL
 */
 
-const getAllPaquetes = async () => {
-  // Luego:
-  // return await paquetesRepository.findAll();
+const db = require('../config/db');
 
-  return [];
+const getAllPaquetes = async () => {
+  const result = await db.query('SELECT * FROM paquetes WHERE activo = true ORDER BY fecha_salida ASC');
+  return result.rows;
 };
 
 const getPaqueteById = async (id) => {
@@ -17,10 +17,8 @@ const getPaqueteById = async (id) => {
     throw new Error("El id del paquete es obligatorio");
   }
 
-  // Luego:
-  // const paquete = await paquetesRepository.findById(id);
-
-  return { id };
+  const result = await db.query('SELECT * FROM paquetes WHERE id = $1', [id]);
+  return result.rows[0] || null;
 };
 
 const updatePaquete = async (id, data) => {
@@ -39,13 +37,18 @@ const updatePaquete = async (id, data) => {
     throw new Error("Debe enviar al menos un campo para actualizar");
   }
 
-  // Luego:
-  // return await paquetesRepository.update(id, data);
+  const result = await db.query(
+    `UPDATE paquetes SET 
+       cupos = COALESCE($1, cupos),
+       activo = COALESCE($2, activo),
+       precio_cop = COALESCE($3, precio_cop),
+       descripcion = COALESCE($4, descripcion),
+       updated_at = CURRENT_TIMESTAMP
+     WHERE id = $5 RETURNING *`,
+    [cupos, activo, precio_cop, descripcion, id]
+  );
 
-  return {
-    id,
-    ...data,
-  };
+  return result.rows[0];
 };
 
 module.exports = {

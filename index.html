@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GoalTrip - Test API</title>
+</head>
+<body>
+    <h1>GoalTrip Colombia - Test API</h1>
+    
+    <h2>1. Listar Paquetes (GET)</h2>
+    <button onclick="getPaquetes()">Cargar Paquetes</button>
+    <div id="paquetes"></div>
+
+    <h2>2. Registrar Lead (POST)</h2>
+    <form id="leadForm">
+        <label>Nombre: <input type="text" id="nombre" required></label><br><br>
+        <label>Email: <input type="email" id="email" required></label><br><br>
+        <label>Teléfono: <input type="text" id="telefono" required></label><br><br>
+        <label>Paquete ID: <input type="number" id="paquete_id" required></label><br><br>
+        <label>Mensaje: <textarea id="mensaje"></textarea></label><br><br>
+        <button type="submit">Enviar Lead</button>
+    </form>
+    <div id="resultado"></div>
+
+    <script>
+        // Variables inyectadas desde el servidor (.env)
+        const API_URL = '__API_URL__';
+        const API_KEY = '__API_KEY__';
+
+        // GET /paquetes
+        async function getPaquetes() {
+            try {
+                const res = await fetch(`${API_URL}/paquetes`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    }
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    document.getElementById('paquetes').innerHTML = 
+                        `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    document.getElementById('paquetes').innerHTML = 
+                        `<p style="color:red">Error: ${data.mensaje}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('paquetes').innerHTML = 
+                    `<p style="color:red">Error de conexión: ${error.message}</p>`;
+            }
+        }
+
+        // POST /leads
+        document.getElementById('leadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const leadData = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value,
+                paquete_id: parseInt(document.getElementById('paquete_id').value),
+                mensaje: document.getElementById('mensaje').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify(leadData)
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('resultado').innerHTML = 
+                        `<p style="color:green">Lead registrado: ${JSON.stringify(data)}</p>`;
+                    document.getElementById('leadForm').reset();
+                } else {
+                    document.getElementById('resultado').innerHTML = 
+                        `<p style="color:red">Error: ${data.mensaje}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = 
+                    `<p style="color:red">Error de conexión: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

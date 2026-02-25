@@ -1,5 +1,7 @@
 // src/services/leads.service.js
 
+const db = require('../config/db');
+
 const createLead = async (data) => {
   const { nombre, email, telefono, mensaje, paquete_id } = data;
 
@@ -10,13 +12,22 @@ const createLead = async (data) => {
   if (!email.includes("@")) {
     throw new Error("Email inválido");
   }
-  // Luego insertar en DB
-  return {
-    id: 1,
-    ...data,
-  };
+
+  const result = await db.query(
+    `INSERT INTO leads (nombre, email, telefono, mensaje, paquete_id, estado) 
+     VALUES ($1, $2, $3, $4, $5, 'nuevo') RETURNING *`,
+    [nombre, email, telefono, mensaje, paquete_id]
+  );
+
+  return result.rows[0];
+};
+
+const getAllLeads = async () => {
+  const result = await db.query('SELECT * FROM leads ORDER BY fecha DESC');
+  return result.rows;
 };
 
 module.exports = {
   createLead,
+  getAllLeads,
 };

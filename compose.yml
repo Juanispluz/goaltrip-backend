@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15
+    image: docker.io/postgres:15
     container_name: goaltrip_db
     restart: always
     environment:
@@ -19,3 +19,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build: .
+    container_name: goaltrip_api
+    restart: always
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      DB_HOST: postgres
+      API_KEY_SECRET: ${API_KEY_SECRET}
+      APP_PORT: ${APP_PORT}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS}
+      FRONTEND_URL: ${FRONTEND_URL}
+    ports:
+      - "${APP_PORT}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
