@@ -15,7 +15,7 @@
     <form id="leadForm">
         <label>Nombre: <input type="text" id="nombre" required></label><br><br>
         <label>Email: <input type="email" id="email" required></label><br><br>
-        <label>Teléfono: <input type="text" id="telefono" required></label><br><br>
+        <label>Telefono: <input type="text" id="telefono" required></label><br><br>
         <label>Paquete ID: <input type="number" id="paquete_id" required></label><br><br>
         <label>Mensaje: <textarea id="mensaje"></textarea></label><br><br>
         <button type="submit">Enviar Lead</button>
@@ -48,7 +48,7 @@
                 }
             } catch (error) {
                 document.getElementById('paquetes').innerHTML = 
-                    `<p style="color:red">Error de conexión: ${error.message}</p>`;
+                    `<p style="color:red">Error de conexion: ${error.message}</p>`;
             }
         }
 
@@ -85,7 +85,7 @@
                 }
             } catch (error) {
                 document.getElementById('resultado').innerHTML = 
-                    `<p style="color:red">Error de conexión: ${error.message}</p>`;
+                    `<p style="color:red">Error de conexion: ${error.message}</p>`;
             }
         });
     </script>
