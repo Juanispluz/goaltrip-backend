@@ -17,7 +17,7 @@ El proyecto utiliza una **arquitectura por capas (Layered Architecture)** que or
 Esta arquitectura fue elegida porque:
 - Separa responsabilidades de forma clara
 - Facilita el mantenimiento y testing
-- Es simple pero escalable para un proyecto de este tamaño
+- Es simple pero escalable para proyectos pequeños
 - Permite reutilizar lógica de negocio en diferentes controladores
 
 ## Tecnologías
