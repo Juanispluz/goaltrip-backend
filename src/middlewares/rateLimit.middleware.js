@@ -1,8 +1,9 @@
+require('dotenv').config();
 const rateLimit = require('express-rate-limit');
 
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS),
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS),
   message: { 
     error: true, 
     mensaje: 'Demasiadas peticiones, intente más tarde',
