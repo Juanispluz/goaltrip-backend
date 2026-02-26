@@ -3,7 +3,15 @@ const router = express.Router();
 
 const leadsController = require("../controllers/leads.controller");
 
-// POST /api/leads
+/**
+ * @swagger
+ * /api/leads:
+ *   post:
+ *     summary: Crear un lead
+ *     responses:
+ *       201:
+ *         description: Lead creado correctamente
+ */
 router.post("/", leadsController.create);
 
 module.exports = router;

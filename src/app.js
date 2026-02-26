@@ -1,3 +1,6 @@
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./docs/swagger");
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -13,6 +16,9 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization']
 }));
 app.use(express.json());
+
+// Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rate Limit
 const rateLimiter = require('./middlewares/rateLimit.middleware');
