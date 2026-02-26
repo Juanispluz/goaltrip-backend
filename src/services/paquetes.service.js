@@ -5,54 +5,48 @@ Funciones de lógica de negocio para paquetes
 Aquí luego se conectará el repository con PostgreSQL
 */
 
-const db = require('../config/db');
+const PaquetesRepository = require('../repositories/paquetes.repository');
+const AppError = require('../utils/AppError');
 
 const getAllPaquetes = async () => {
-  const result = await db.query('SELECT * FROM paquetes WHERE activo = true ORDER BY fecha_salida ASC');
-  return result.rows;
+  return PaquetesRepository.findAllActivos();
 };
 
 const getPaqueteById = async (id) => {
-  if (!id) {
-    throw new Error("El id del paquete es obligatorio");
-  }
-
-  const result = await db.query('SELECT * FROM paquetes WHERE id = $1', [id]);
-  return result.rows[0] || null;
+  if (!id) throw new AppError('El id del paquete es obligatorio', 400);
+  return PaquetesRepository.findById(id);
 };
 
 const updatePaquete = async (id, data) => {
-  if (!id) {
-    throw new Error("El id es obligatorio");
+  if (!id) throw new AppError('El id es obligatorio', 400);
+
+  const { cupos, activo, precio_cop, descripcion } = data || {};
+
+  const hasAny =
+    cupos !== undefined ||
+    activo !== undefined ||
+    precio_cop !== undefined ||
+    descripcion !== undefined;
+
+  if (!hasAny) {
+    throw new AppError('Debe enviar al menos un campo para actualizar', 400);
   }
 
-  const { cupos, activo, precio_cop, descripcion } = data;
-
-  if (
-    cupos === undefined &&
-    activo === undefined &&
-    precio_cop === undefined &&
-    descripcion === undefined
-  ) {
-    throw new Error("Debe enviar al menos un campo para actualizar");
+  // Validaciones rápidas (opcionales pero recomendadas)
+  if (cupos !== undefined && (!Number.isInteger(cupos) || cupos < 0)) {
+    throw new AppError('cupos debe ser un entero >= 0', 400);
   }
 
-  const result = await db.query(
-    `UPDATE paquetes SET 
-       cupos = COALESCE($1, cupos),
-       activo = COALESCE($2, activo),
-       precio_cop = COALESCE($3, precio_cop),
-       descripcion = COALESCE($4, descripcion),
-       updated_at = CURRENT_TIMESTAMP
-     WHERE id = $5 RETURNING *`,
-    [cupos, activo, precio_cop, descripcion, id]
-  );
+  const updated = await PaquetesRepository.updateById(id, {
+    cupos: cupos ?? null,
+    activo: activo ?? null,
+    precio_cop: precio_cop ?? null,
+    descripcion: descripcion ?? null,
+  });
 
-  return result.rows[0];
+  if (!updated) throw new AppError('Paquete no encontrado', 404);
+
+  return updated;
 };
 
-module.exports = {
-  getAllPaquetes,
-  getPaqueteById,
-  updatePaquete,
-};
+module.exports = { getAllPaquetes, getPaqueteById, updatePaquete };

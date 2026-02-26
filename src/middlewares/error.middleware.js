@@ -1,10 +1,13 @@
 const manejoErrores = (err, req, res, next) => {
   console.error(err.stack);
-  
-  res.status(err.status || 500).json({
+
+  const status = err.status || err.statusCode || 500;
+
+  res.status(status).json({
     error: true,
     mensaje: err.message || 'Error interno del servidor',
-    codigo: err.status || 500
+    codigo: status,
+    ...(err.details ? { details: err.details } : {}),
   });
 };
 

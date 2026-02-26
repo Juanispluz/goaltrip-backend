@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS paquetes (
     incluye JSONB, 
     descripcion TEXT,
     activo BOOLEAN DEFAULT true, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 2. Tabla de Leads

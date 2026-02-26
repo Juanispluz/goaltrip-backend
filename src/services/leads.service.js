@@ -1,33 +1,33 @@
 // src/services/leads.service.js
 
-const db = require('../config/db');
+const LeadsRepository = require('../repositories/leads.repository');
+const AppError = require('../utils/AppError');
+const { isValidEmail } = require('../utils/validators');
 
 const createLead = async (data) => {
   const { nombre, email, telefono, mensaje, paquete_id } = data;
 
   if (!nombre || !email || !telefono || !paquete_id) {
-    throw new Error("Faltan campos obligatorios");
+    throw new AppError('Faltan campos obligatorios', 400);
   }
 
-  if (!email.includes("@")) {
-    throw new Error("Email inválido");
+  if (!isValidEmail(email)) {
+    throw new AppError('Email inválido', 400);
   }
 
-  const result = await db.query(
-    `INSERT INTO leads (nombre, email, telefono, mensaje, paquete_id, estado) 
-     VALUES ($1, $2, $3, $4, $5, 'nuevo') RETURNING *`,
-    [nombre, email, telefono, mensaje, paquete_id]
-  );
-
-  return result.rows[0];
+  try {
+    return await LeadsRepository.insert({ nombre, email, telefono, mensaje, paquete_id });
+  } catch (err) {
+    // FK: paquete_id no existe
+    if (err.code === '23503') {
+      throw new AppError('paquete_id no existe', 400);
+    }
+    throw err;
+  }
 };
 
 const getAllLeads = async () => {
-  const result = await db.query('SELECT * FROM leads ORDER BY fecha DESC');
-  return result.rows;
+  return LeadsRepository.findAll();
 };
 
-module.exports = {
-  createLead,
-  getAllLeads,
-};
+module.exports = { createLead, getAllLeads };
